@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management</title>
+    <style>
+        /* Basic styling */
+       /* styles.css */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="date"]:focus {
+    border-color: #4CAF50;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f2f2f2;
+    transition: background-color 0.3s ease-in-out;
+}
+
+
+    </style>
+</head>
+<body>
+    <h2>Customer Management</h2>
+    <form id="customerForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="text" id="address" placeholder="Address">
+        <input type="date" id="dateOfBirth" placeholder="Date of Birth">
+        <input type="tel" id="phoneNumber" placeholder="Phone Number">
+        <button type="submit">Add Customer</button>
+    </form>
+
+    <table id="customerTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Date of Birth</th>
+                <th>Phone Number</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="customerData">
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Function to fetch and display customers
+        function fetchCustomers() {
+            $.get('/customers/allCustomers', function(data) {
+                $('#customerData').empty();
+                data.forEach(function(customer) {
+                    $('#customerData').append(`
+                        <tr>
+                            <td>${customer.name}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.address}</td>
+                            <td>${customer.dateOfBirth}</td>
+                            <td>${customer.phoneNumber}</td>
+                            <td>
+                                <button onclick="editCustomer(${customer.id})">Edit</button>
+                                <button onclick="deleteCustomer(${customer.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+            });
+        }
+
+        // Fetch customers on page load
+        $(document).ready(function() {
+            fetchCustomers();
+        });
+
+        // Function to add or update customer
+        $('#customerForm').submit(function(event) {
+            event.preventDefault();
+            var customerData = {
+                name: $('#name').val(),
+                email: $('#email').val(),
+                address: $('#address').val(),
+                dateOfBirth: $('#dateOfBirth').val(),
+                phoneNumber: $('#phoneNumber').val()
+            };
+            $.ajax({
+                url: '/customers/createCustomer',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(customerData),
+                success: function() {
+                    fetchCustomers();
+                    $('#customerForm').trigger('reset');
+                }
+            });
+        });
+
+        // Function to delete customer
+        function deleteCustomer(customerId) {
+            $.ajax({
+                url: '/customers/deleteCustomer/' + customerId,
+                type: 'DELETE',
+                success: function() {
+                    fetchCustomers();
+                }
+            });
+        }
+
+        // Function to populate form for editing customer
+        function editCustomer(customerId) {
+            $.get('/customers/updateCustomer/' + customerId, function(data) {
+                $('#name').val(data.name);
+                $('#email').val(data.email);
+                $('#address').val(data.address);
+                $('#dateOfBirth').val(data.dateOfBirth);
+                $('#phoneNumber').val(data.phoneNumber);
+                $('#customerForm').append(`<input type="hidden" id="customerId" value="${customerId}">`);
+                $('#customerForm button[type="submit"]').text('Update Customer');
+            });
+        }
+    </script>
+</body>
+</html>
