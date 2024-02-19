@@ -1,4 +1,4 @@
-package com.fsd.customerInteraction.exceptions;
+package com.fsd.customer.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

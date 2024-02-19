@@ -1,4 +1,4 @@
-package com.fsd.customerInteraction.resource;
+package com.fsd.customer.resource;
 
 import java.time.LocalDate;
 

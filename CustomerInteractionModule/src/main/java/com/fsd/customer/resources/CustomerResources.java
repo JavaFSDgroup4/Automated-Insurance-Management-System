@@ -1,4 +1,4 @@
-package com.fsd.customerInteraction.resources;
+package com.fsd.customer.resources;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fsd.customerInteraction.exceptions.ResourceNotFoundException;
-import com.fsd.customerInteraction.repository.CustomerRepository;
-import com.fsd.customerInteraction.resource.Customer;
+import com.fsd.customer.exceptions.ResourceNotFoundException;
+import com.fsd.customer.repository.CustomerRepository;
+import com.fsd.customer.resource.Customer;
 
 //CustomerController.java
 @RestController
